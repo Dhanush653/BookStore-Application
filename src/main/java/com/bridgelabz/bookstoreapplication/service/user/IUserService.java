@@ -1,5 +1,6 @@
-package com.bridgelabz.bookstoreapplication.service;
+package com.bridgelabz.bookstoreapplication.service.user;
 
+import com.bridgelabz.bookstoreapplication.dto.LoginDTO;
 import com.bridgelabz.bookstoreapplication.dto.UserDTO;
 import com.bridgelabz.bookstoreapplication.entity.UserEntity;
 
@@ -11,4 +12,8 @@ public interface IUserService {
     UserEntity createUser(UserEntity user);
     UserEntity updatedUser(long id);
     void deleteuser(long id);
+
+    String userRegistration(UserEntity user);
+    String logintoken(LoginDTO login);
+    List<UserEntity> generateUserByToken(String token);
 }
