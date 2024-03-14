@@ -24,7 +24,7 @@ public class UserEntity {
     private int user_id;
 
     @Column(name = "first_name")
-    @NotEmpty(message = "First name cannot be empty")
+    @NotBlank(message = "First name cannot be empty")
     @Pattern(regexp = "^[A-Z][a-z]+$", message = "Invalid first name format")
     private String user_firstname;
 
@@ -34,28 +34,27 @@ public class UserEntity {
     private String user_lastname;
 
     @Column(name = "dob")
-    @NotEmpty(message = "DOB cannot be empty")
+    @NotBlank(message = "DOB cannot be empty")
     @Past
     private LocalDate user_dob;
 
     @Column(name = "registered_date")
-    @NotEmpty
+    @NotBlank
     @PastOrPresent
     private LocalDate user_registered_date;
 
     @Column(name = "updated_date")
-    @NotEmpty
+    @NotBlank
     private LocalDate user_updated_date;
 
     @Column(name = "password")
-    @NotEmpty
+    @NotBlank
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!&])[A-Za-z0-9]+$", message = "Invalid password format")
     private String user_password;
 
     @Column(name = "email")
     @NotBlank(message = "Email cannot be empty")
-    @Pattern(regexp = "^[a-z0-9.+\\-_]+[@][a-z]{3,}[.][a-z]{2,}$", message = "Invalid email format")
+    @Email(message = "Invalid email format")
     private String email;
-
-    private boolean user_verify;
+    private boolean user_verify = false;
 }

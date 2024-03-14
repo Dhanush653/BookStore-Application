@@ -1,12 +1,14 @@
 package com.bridgelabz.bookstoreapplication.controller;
 
+import com.bridgelabz.bookstoreapplication.dto.ChangePasswordDTO;
+import com.bridgelabz.bookstoreapplication.dto.ForgetPasswordDTO;
 import com.bridgelabz.bookstoreapplication.dto.LoginDTO;
-import com.bridgelabz.bookstoreapplication.dto.UserDTO;
+import com.bridgelabz.bookstoreapplication.dto.ResetPasswordDTO;
 import com.bridgelabz.bookstoreapplication.entity.UserEntity;
 import com.bridgelabz.bookstoreapplication.service.user.IUserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -16,11 +18,11 @@ public class UserController {
     private IUserService userservice;
 
     @GetMapping("/all")
-    List<UserDTO> getAlluserdetails(){
+    List<UserEntity> getAlluserdetails(){
         return userservice.getAlluserdetails();
     }
     @GetMapping("/{id}")
-    UserDTO getAlluserbyId(@PathVariable int id){
+    UserEntity getAlluserbyId(@PathVariable int id){
         return userservice.getAlluserbyId(id);
     }
     @PostMapping("/create")
@@ -36,15 +38,28 @@ public class UserController {
         userservice.deleteuser(id);
     }
     @PostMapping("/registration")
-    String userRegistration(@RequestBody UserEntity user){
+    String userRegistration(@RequestBody @Valid UserEntity user){
         return userservice.userRegistration(user);
     }
     @PostMapping("/login")
-    String logintoken(@RequestBody LoginDTO login){
+    String logintoken(@RequestBody @Valid LoginDTO login){
         return userservice.logintoken(login);
     }
     @GetMapping("/details")
     List<UserEntity> generateUserByToken(@RequestHeader String token){
         return userservice.generateUserByToken(token);
+    }
+    @PostMapping("/forget")
+    String forgetPassword(@RequestBody ForgetPasswordDTO request){
+        return userservice.forgetPassword(request.getEmail());
+    }
+    @PostMapping("/change")
+    String changePassword(@RequestBody ChangePasswordDTO change){
+        return userservice.changePassword(change.getEmail(),change.getOtp(),change.getNewPassword());
+    }
+
+    @PostMapping("/reset")
+    String resetPassword(@RequestBody ResetPasswordDTO reset){
+        return userservice.resetPassword(reset.getEmail(),reset.getOldPassword(),reset.getNewPassword());
     }
 }

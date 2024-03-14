@@ -1,19 +1,18 @@
 package com.bridgelabz.bookstoreapplication.service.user;
 
-import com.bridgelabz.bookstoreapplication.service.user.IUserService;
-import com.bridgelabz.bookstoreapplication.util.Emailsender;
-import com.bridgelabz.bookstoreapplication.util.JWTservice;
+import com.bridgelabz.bookstoreapplication.utility.Emailsender;
+import com.bridgelabz.bookstoreapplication.utility.ForgetPassword;
+import com.bridgelabz.bookstoreapplication.utility.JWTservice;
 import com.bridgelabz.bookstoreapplication.dto.LoginDTO;
-import com.bridgelabz.bookstoreapplication.dto.UserDTO;
 import com.bridgelabz.bookstoreapplication.entity.UserEntity;
 import com.bridgelabz.bookstoreapplication.exception.UserException;
 import com.bridgelabz.bookstoreapplication.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImp implements IUserService {
@@ -27,16 +26,16 @@ public class UserServiceImp implements IUserService {
     @Autowired
     private Emailsender mailsender;
 
+    @Autowired
+    private BCryptPasswordEncoder passwordconfig;
+
+    @Autowired
+    private ForgetPassword forget;
+
     @Override
-    public List<UserDTO> getAlluserdetails() {
+    public List<UserEntity> getAlluserdetails() {
         try{
-            return repo.findAll().stream()
-                    .map(userEntity -> new UserDTO(
-                            userEntity.getUser_id(),
-                            userEntity.getUser_firstname(),
-                            userEntity.getUser_lastname(),
-                            userEntity.getUser_dob()))
-                    .collect(Collectors.toList());
+            return repo.findAll();
         }
         catch (Exception e){
             System.out.println("Error: " + e.getMessage());
@@ -45,17 +44,10 @@ public class UserServiceImp implements IUserService {
     }
 
     @Override
-    public UserDTO getAlluserbyId(long id) {
+    public UserEntity getAlluserbyId(long id) {
         try{
-            UserEntity userbyid = repo.findById(id).orElse(null);
-            if (userbyid != null) {
-                return new UserDTO(
-                        userbyid.getUser_id(),
-                        userbyid.getUser_firstname(),
-                        userbyid.getUser_lastname(),
-                        userbyid.getUser_dob());
-            }
-            return null;
+            UserEntity userid = repo.findById(id).get();
+            return userid;
         }
         catch (Exception e){
             System.out.println("Error: " + e.getMessage());
@@ -107,18 +99,24 @@ public class UserServiceImp implements IUserService {
 
     @Override
     public String userRegistration(UserEntity user) {
+        String encodedpassword = passwordconfig.encode(user.getUser_password());
+        user.setUser_password(encodedpassword);
+        user.setUser_verify(true);
         repo.save(user);
-        String body = "You have Registered Successfully." + "Please Click the below link to login" + "https://localhost:8080/user/login";
+        String body ="Hello "+ user.getUser_firstname() + " " + user.getUser_lastname() + " You have Registered Successfully in book store Please Click the below link to login" + "https://localhost:8080/user/login";
         String subject = "You have registered Successfully";
-        System.out.println("Registered mail" + user.getEmail());
+        System.out.println(user.getEmail());
+        System.out.println("Mail sent successfully");
         mailsender.sendMail(user.getEmail(),subject,body);
         return "User registered successfully";
     }
 
     @Override
     public String logintoken(LoginDTO login) {
-        UserEntity userentity = repo.findByUsernameAndPassword(login.getEmail(),login.getPassword());
-        if(userentity != null){
+
+        UserEntity userentity = repo.findByEmail(login.getEmail());
+
+        if(userentity != null && passwordconfig.matches(login.getPassword(),userentity.getUser_password())){
             String token = jwtservice.generateToken(login.getEmail());
             String body = "Successfully Registered";
             String subject = "Mail from Spring";
@@ -133,5 +131,32 @@ public class UserServiceImp implements IUserService {
         String email = jwtservice.decodetoken(token);
         UserEntity userEntity = repo.findByEmail(email);
         return Collections.singletonList(userEntity);
+    }
+
+    @Override
+    public String forgetPassword(String email) {
+        String otp = forget.generateOtp();
+        forget.sendOtp(email,otp);
+        return "OTP send to " + email;
+    }
+
+    @Override
+    public String changePassword(String email, String otp, String newPassword) {
+        forget.changePassword(email,otp,newPassword);
+
+        return "Password changed successfully";
+    }
+
+    @Override
+    public String resetPassword(String email, String oldPassword, String newPassword) {
+        UserEntity userEntity = repo.findByEmail(email);
+        if(userEntity != null && passwordconfig.matches(oldPassword, userEntity.getUser_password())){
+            userEntity.setUser_password(passwordconfig.encode(newPassword));
+            repo.save(userEntity);
+            return "Password changed successfully";
+        }
+        else{
+            return "Invalid email or oldPassword";
+        }
     }
 }

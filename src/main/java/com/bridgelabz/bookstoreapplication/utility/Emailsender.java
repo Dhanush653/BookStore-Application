@@ -1,4 +1,4 @@
-package com.bridgelabz.bookstoreapplication.util;
+package com.bridgelabz.bookstoreapplication.utility;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;

@@ -1,14 +1,10 @@
 package com.bridgelabz.bookstoreapplication.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.stereotype.Component;
 
 @Data
 @AllArgsConstructor
@@ -16,8 +12,16 @@ import org.springframework.stereotype.Component;
 @ToString
 
 public class RegistrationDTO {
+    @NotBlank(message = "First name cannot be empty")
+    @Pattern(regexp = "^[A-Z][a-z]+$", message = "Invalid first name format")
     private String firstname;
+    @NotBlank(message = "Last name cannot be empty")
+    @Pattern(regexp = "^[A-Z][a-z]+$", message = "Invalid lastname format")
     private String lastname;
+    @NotEmpty(message = "DOB cannot be empty")
+    @Past
     private String dob;
+    @NotBlank
+    @Email
     private String email;
 }
