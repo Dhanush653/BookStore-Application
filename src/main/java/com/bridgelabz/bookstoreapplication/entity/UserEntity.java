@@ -33,6 +33,11 @@ public class UserEntity {
     @Pattern(regexp = "^[A-Z][a-z]+$", message = "Invalid lastname format")
     private String user_lastname;
 
+    @Column(name = "email")
+    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Invalid email format")
+    private String email;
+
     @Column(name = "dob")
     @NotBlank(message = "DOB cannot be empty")
     @Past
@@ -41,20 +46,15 @@ public class UserEntity {
     @Column(name = "registered_date")
     @NotBlank
     @PastOrPresent
-    private LocalDate user_registered_date;
+    private LocalDate user_registereddate;
 
     @Column(name = "updated_date")
     @NotBlank
-    private LocalDate user_updated_date;
+    private LocalDate user_updateddate;
 
     @Column(name = "password")
     @NotBlank
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!&])[A-Za-z0-9]+$", message = "Invalid password format")
     private String user_password;
-
-    @Column(name = "email")
-    @NotBlank(message = "Email cannot be empty")
-    @Email(message = "Invalid email format")
-    private String email;
     private boolean user_verify = false;
 }

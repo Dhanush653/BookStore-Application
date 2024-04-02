@@ -15,8 +15,6 @@ import lombok.ToString;
 public class LoginDTO {
     @NotBlank
     @Email
-    private String email;
-    @NotBlank
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!&])[A-Za-z0-9]+$", message = "Invalid password format")
-    private String password;
+    private String user_email;
+    private String user_password;
 }

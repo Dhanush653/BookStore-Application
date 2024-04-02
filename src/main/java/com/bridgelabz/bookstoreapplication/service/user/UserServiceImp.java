@@ -114,14 +114,14 @@ public class UserServiceImp implements IUserService {
     @Override
     public String logintoken(LoginDTO login) {
 
-        UserEntity userentity = repo.findByEmail(login.getEmail());
+        UserEntity userentity = repo.findByEmail(login.getUser_email());
 
-        if(userentity != null && passwordconfig.matches(login.getPassword(),userentity.getUser_password())){
-            String token = jwtservice.generateToken(login.getEmail());
+        if(userentity != null && passwordconfig.matches(login.getUser_password(),userentity.getUser_password())){
+            String token = jwtservice.generateToken(login.getUser_email());
             String body = "Successfully Registered";
             String subject = "Mail from Spring";
-            mailsender.sendMail(login.getEmail(),subject,body);
-            return "Login Successfully || Token: "+ token;
+            mailsender.sendMail(login.getUser_email(),subject,body);
+            return token;
         }
         else{
             return "Invalid Login. Try Again";

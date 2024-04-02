@@ -35,7 +35,7 @@ public class ForgetPassword {
     public void changePassword(String email, String otp, String newPassword){
         if(verifyOtp(email, otp)){
             UserEntity userEntity = user.findByEmail(email);
-            if(user != null){
+            if(userEntity != null){
                 userEntity.setUser_password(newPassword);
                 user.save(userEntity);
                 System.out.println("Password changed Successfully for " + email);

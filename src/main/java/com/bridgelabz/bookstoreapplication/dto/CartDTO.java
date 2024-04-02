@@ -9,7 +9,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-
-public class ForgetPasswordDTO {
-    String user_email;
+public class CartDTO {
+    private int book_quantity;
+    private int book_price;
+    private int book_id;
+    private int user_id;
 }
