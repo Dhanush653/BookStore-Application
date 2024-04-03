@@ -17,7 +17,7 @@ import lombok.ToString;
 @Table(name = "Cart_table")
 public class CartEntity {
     @Id
-    @Column(name = "id")
+    @Column(name = "cart_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long cart_id;
 //    @Column(name = "userid")
