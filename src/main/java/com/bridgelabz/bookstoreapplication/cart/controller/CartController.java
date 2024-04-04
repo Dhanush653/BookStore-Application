@@ -16,31 +16,32 @@ public class CartController {
     public CartController(CartServiceImp cartService) {
         this.cartService = cartService;
     }
-
+    //Add a item in the cart
     @PostMapping("/add")
     public void addToCart(@RequestBody CartDTO cartDTO) {
         cartService.addToCart(cartDTO);
     }
-
-    @DeleteMapping("/remove/{cartId}")
-    public void removeFromCart(@PathVariable Long cartId) {
-        cartService.removeFromCart(cartId);
+    // remove a item in the cart by its id
+    @DeleteMapping("/remove/{cartid}")
+    public void removeFromCart(@PathVariable Long cartid) {
+        cartService.removeFromCart(cartid);
     }
-
-    @DeleteMapping("/removeByUser/{userId}")
-    public void removeByUserId(@PathVariable long userId) {
-        cartService.removeByUserId(userId);
+    // remove all the cart items for a particular user id
+    @DeleteMapping("/removeByUser/{userid}")
+    public void removeByUserId(@PathVariable long userid) {
+        cartService.removeByUserId(userid);
     }
-
-    @PutMapping("/updateQuantity/{cartId}/{quantity}")
-    public void updateQuantity(@PathVariable Long cartId, @PathVariable int quantity) {
-        cartService.updateQuantity(cartId, quantity);
+    // update the quantity of the particular book
+    @PutMapping("/updateQuantity/{cartid}/{quantity}")
+    public void updateQuantity(@PathVariable Long cartid, @PathVariable int quantity) {
+        cartService.updateQuantity(cartid, quantity);
     }
-
-    @GetMapping("/allForUser/{userId}")
-    public List<CartDTO> getAllCartItemsForUser(@PathVariable long userId) {
-        return cartService.getAllCartItemsForUser(userId);
+    // Retrieve all the cart items of a particular user
+    @GetMapping("/allForUser/{userid}")
+    public List<CartDTO> getAllCartItemsForUser(@PathVariable long userid) {
+        return cartService.getAllCartItemsForUser(userid);
     }
+    // Retrive all cart items
     @GetMapping("/all")
     public List<CartDTO> getAllCartItems() {
         return cartService.getAllCartItems();
